@@ -15,16 +15,13 @@ func main() {
 		MinBytes:  10e3,
 		MaxBytes:  10e6,
 	})
-	r.SetOffset(42)
-	fmt.Printf("hello")
+	r.SetOffset(43)
 	for {
-		fmt.Printf("hello1")
 		m, err := r.ReadMessage(context.Background())
-		fmt.Printf("hello2")
 		if err != nil {
 			break
 		}
-		fmt.Printf("message at offset %d: %s \n", m.Offset, string(m.Key), string(m.Value))
+		fmt.Printf("message at offset %d: %s \n", m.Offset, string(m.Key), m.Value)
 	}
 	if err := r.Close(); err != nil {
 		log.Fatal("failed to close reader:", err)
