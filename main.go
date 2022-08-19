@@ -1,24 +1,20 @@
 package main
 
 import (
-	"github.com/darianJmy/XingXing-adapter/cmd"
 	"github.com/darianJmy/XingXing-adapter/options"
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	s := NewHttpServer(":8081")
-	s.Run()
-}
 
-func NewHttpServer(addr string) *options.Options {
-	o := options.Options{
-		Address: addr,
-		Engine:  gin.Default(),
-		Conn:    cmd.InitKafkaClient(),
+	s := options.NewHttpServer(":8081")
+
+	for i := 0; i < 5; i++ {
+		go s.WriteMessagesToMongo()
 	}
 
-	o.Engine.POST("/", o.SetBodyToKafka)
+	for i := 0; i < 5; i++ {
+		go s.WriteMessagesToKafka()
+	}
 
-	return &o
+	s.Run()
 }

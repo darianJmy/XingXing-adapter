@@ -3,7 +3,9 @@ package cmd
 import (
 	"context"
 	"github.com/segmentio/kafka-go"
-	"log"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
 func InitKafkaClient() *kafka.Conn {
@@ -15,13 +17,16 @@ func InitKafkaClient() *kafka.Conn {
 	if err != nil {
 		return nil
 	}
-
 	return conn
 }
 
-func SetWriteToMessage(conn *kafka.Conn, body []byte) {
-	_, err := conn.WriteMessages(kafka.Message{Value: body})
+func InitMongoClient() *mongo.Collection {
+	client, err := mongo.Connect(context.Background(),
+		options.Client().ApplyURI("mongodb://root:root@localhost:27017").SetConnectTimeout(5*time.Second))
 	if err != nil {
-		log.Fatal("failed to write messages:", err)
+		panic(err)
 	}
+	db := client.Database("prometheus")
+	collection := db.Collection("new")
+	return collection
 }
