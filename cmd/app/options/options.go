@@ -5,8 +5,6 @@ import (
 	"fmt"
 	pixiuConfig "github.com/caoyingjunz/pixiulib/config"
 	"github.com/darianJmy/XingXing-adapter/cmd/app/config"
-	"github.com/darianJmy/XingXing-adapter/cmd/app/router"
-	"github.com/darianJmy/XingXing-adapter/pkg/adapter"
 	"github.com/gin-gonic/gin"
 	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -25,8 +23,8 @@ type Options struct {
 
 	GinEngine *gin.Engine
 
-	Collection *mongo.Collection
-	Conn       *kafka.Conn
+	Database *mongo.Database
+	Conn     *kafka.Conn
 }
 
 func NewOptions() *Options {
@@ -53,7 +51,6 @@ func (o *Options) Complete() error {
 	if err := o.register(); err != nil {
 		return err
 	}
-	adapter.Setup(o)
 	return nil
 
 }
@@ -68,7 +65,6 @@ func (o *Options) register() error {
 	}
 
 	o.GinEngine = gin.Default()
-	o.RegisterHttpRoute()
 	return nil
 }
 
@@ -101,17 +97,12 @@ func (o *Options) InitMongoClient() error {
 	}
 
 	db := client.Database(o.ComponentConfig.Mongo.DataBase)
-	collection := db.Collection(o.ComponentConfig.Mongo.Collection)
 
-	o.Collection = collection
+	o.Database = db
 
 	return nil
 }
 
 func (o *Options) Run() {
 	_ = o.GinEngine.Run(fmt.Sprintf(":%d", o.ComponentConfig.Default.Listen))
-}
-
-func (o *Options) RegisterHttpRoute() {
-	o.GinEngine.POST("/", router.HandleMessages)
 }

@@ -13,12 +13,11 @@ type DefaultOptions struct {
 }
 
 type MongoOptions struct {
-	Host       string `yaml:"host"`
-	User       string `yaml:"user"`
-	Password   string `yaml:"password"`
-	Port       int    `yaml:"port"`
-	DataBase   string `yaml:"database"`
-	Collection string `yaml:"collection"`
+	Host     string `yaml:"host"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	Port     int    `yaml:"port"`
+	DataBase string `yaml:"database"`
 }
 
 type KafkaOptions struct {
@@ -26,19 +25,4 @@ type KafkaOptions struct {
 	Partition int    `yaml:"partition"`
 	Host      string `yaml:"host"`
 	Port      int    `yaml:"port"`
-}
-
-type KafkaRequest struct {
-	Receiver    string `json:"receiver"`
-	Status      string `json:"status"`
-	ExternalURL string `json:"externalURL"`
-}
-
-type AlertManager struct {
-	Receiver        string `json:"receiver"`
-	Status          string `json:"status"`
-	ExternalURL     string `json:"externalURL"`
-	Version         string `json:"version"`
-	GroupKey        string `json:"groupKey"`
-	TruncatedAlerts int    `json:"truncatedAlerts"`
 }

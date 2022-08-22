@@ -2,3 +2,67 @@
 POST http://localhost:8081/
 
 {"username":"jixingxing","age":"18"}
+
+###
+POST http://localhost:8081/
+
+{
+	"receiver": "dev-k8s",
+	"status": "firing",
+	"alerts": [
+		{
+			"status": "firing",
+			"labels": {
+				"alarm_number": "10",
+				"alertname": "sbx-k8s集群etcd节点下线报警",
+				"instance": "10.50.4.24:2379",
+				"is_send_recover": "1",
+				"job": "k8s-sbx环境etcd",
+				"level": "灾难"
+			},
+			"annotations": {
+				"description": "sbx-etcd集群10.50.4.24:2379 异常下线,持续2分钟报警",
+				"state": "1"
+			},
+			"startsAt": "2022-08-19T02:44:23.976207587Z",
+			"endsAt": "0001-01-01T00:00:00Z",
+			"generatorURL": "http://10.50.7.8/graph?g0.expr=max+by%28job%2C+instance%29+%28sum+by%28job%2C+instance%29+%28up%7Bjob%3D%22k8s-sbx%E7%8E%AF%E5%A2%83etcd%22%7D+%3D%3D+bool+0%29+or+count+by%28job%2C+endpoint%29+%28sum+by%28job%2C+endpoint%2C+To%29+%28rate%28etcd_network_peer_sent_failures_total%7Bjob%3D%22k8s-sbx%E7%8E%AF%E5%A2%83etcd%22%7D%5B3m%5D%29%29+%3E+0.01%29%29+%3E+0&g0.tab=1",
+			"fingerprint": "48dda002858d5d4f"
+		},
+		{
+			"status": "firing",
+			"labels": {
+				"alarm_number": "10",
+				"alertname": "sbx-k8s集群etcd节点下线报警",
+				"is_send_recover": "1",
+				"job": "k8s-sbx环境etcd",
+				"level": "灾难"
+			},
+			"annotations": {
+				"description": "sbx-etcd集群 异常下线,持续2分钟报警",
+				"state": "1"
+			},
+			"startsAt": "2022-08-19T02:38:53.976207587Z",
+			"endsAt": "0001-01-01T00:00:00Z",
+			"generatorURL": "http://10.50.7.8/graph?g0.expr=max+by%28job%2C+instance%29+%28sum+by%28job%2C+instance%29+%28up%7Bjob%3D%22k8s-sbx%E7%8E%AF%E5%A2%83etcd%22%7D+%3D%3D+bool+0%29+or+count+by%28job%2C+endpoint%29+%28sum+by%28job%2C+endpoint%2C+To%29+%28rate%28etcd_network_peer_sent_failures_total%7Bjob%3D%22k8s-sbx%E7%8E%AF%E5%A2%83etcd%22%7D%5B3m%5D%29%29+%3E+0.01%29%29+%3E+0&g0.tab=1",
+			"fingerprint": "1a3d36f458292583"
+		}
+	],
+	"groupLabels": {
+		"alertname": "sbx-k8s集群etcd节点下线报警"
+	},
+	"commonLabels": {
+		"alarm_number": "10",
+		"alertname": "sbx-k8s集群etcd节点下线报警 :90",
+		"is_send_recover": "1",
+		"job": "k8s-sbx环境etcd",
+		"level": "灾难"
+	},
+	"commonAnnotations": {
+		"state": "1"
+	},
+	"externalURL": "http://thanos-prometheus-01:9093",
+	"version": "4",
+	"groupKey": "{}/{job=~\"^(?:k8s-sbx环境kube-state-metrics|k8s-sit环境kube-state-metrics|k8s-sbx环境etcd|k8s-sit环境etcd|k8s-sbx环境kube-apiserver|k8s-sit环境kube-apiserver|k8s-sbx环境kubelet|k8s-sit环境kubelet|k8s-sbx环境node-cadvisor|k8s-sit环境node-cadvisor)$\"}:{alertname=\"sbx-k8s集群etcd节点下线报警\"}",
+	"truncatedAlerts": 0
+}
