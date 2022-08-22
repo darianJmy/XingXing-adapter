@@ -1,0 +1,19 @@
+default:
+  # 服务监听端口
+  listen: 8081
+  log_dir: /Users/caoyuan/log
+
+# 数据库地址信息
+mongo:
+  host: localhost
+  user: root
+  password: root
+  port: 27017
+  database: prometheus
+  collection: new
+
+kafka:
+  topic: kafkatest
+  partition: 0
+  host: 10.249.4.155
+  port: 9092
