@@ -1,12 +1,16 @@
 package controller
 
-import "time"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+)
 
 type KafkaMessage struct {
-	Source Source    `json:"source"`
-	Dims   Dims      `json:"dims"`
-	Vals   Vals      `json:"vals"`
-	Time   time.Time `json:"time"`
+	Source  Source             `json:"source"`
+	Dims    Labels             `json:"dims"`
+	Vals    map[string]string  `json:"vals"`
+	Time    time.Time          `json:"time"`
+	MongoID primitive.ObjectID `json:"mongoid"`
 }
 
 type Source struct {
@@ -15,18 +19,11 @@ type Source struct {
 	Org  string `json:"org"`
 }
 
-type Dims struct {
-	IP string `json:"ip"`
-}
-
-type Vals struct {
-	AlertName string `json:"alertname"`
-}
-
 type AlertManager struct {
 	Receiver string `json:"receiver"`
 	Status   string `json:"status"`
 	Alerts   []Alerts
+	ID       primitive.ObjectID `json:"id"`
 }
 
 type Alerts struct {

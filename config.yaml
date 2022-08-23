@@ -10,11 +10,9 @@ mongo:
   password: root
   port: 27017
   database: prometheus
-  mongocollection: new
-  kafkacollection: old
 
 kafka:
-  topic: custom_HOST
+  topic: kafkatest
   partition: 0
-  host: 10.50.7.101
+  host: 10.249.4.155
   port: 9092

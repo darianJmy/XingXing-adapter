@@ -22,4 +22,5 @@ func HandleMessages(c *gin.Context) {
 	fmt.Println(string(body))
 	adapter.AdapterV1.HandleMessages(context.Background(), body)
 	c.String(200, "Success")
+
 }

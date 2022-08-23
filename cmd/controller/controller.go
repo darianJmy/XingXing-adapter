@@ -3,11 +3,9 @@ package controller
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/segmentio/kafka-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
-	"time"
 )
 
 type AdapterV1Interface interface {
@@ -17,10 +15,12 @@ type AdapterV1Interface interface {
 }
 
 type Adapter struct {
-	Ch1      chan []byte
-	Ch2      chan AlertManager
-	Database *mongo.Database
-	Conn     *kafka.Conn
+	Ch1             chan []byte
+	Ch2             chan AlertManager
+	Database        *mongo.Database
+	Conn            *kafka.Conn
+	KafkaCollection *mongo.Collection
+	MongoCollection *mongo.Collection
 }
 
 func (a *Adapter) HandleMessages(ctx context.Context, body []byte) {
@@ -32,19 +32,20 @@ func (a *Adapter) WriteMessagesToMongo(ctx context.Context) {
 	for {
 		msg := <-a.Ch1
 
-		time.Sleep(5 * time.Second)
-		fmt.Println(string(msg))
 		err := json.Unmarshal(msg, &alertManager)
 		if err != nil {
-			log.Println(err)
 			continue
 		}
-		collection := a.Database.Collection("new")
-		_, err = collection.InsertOne(context.Background(), alertManager)
+
+		iResult, err := a.MongoCollection.InsertOne(context.Background(), alertManager)
 		if err != nil {
 			continue
 		}
+		id := iResult.InsertedID.(primitive.ObjectID)
+		alertManager.ID = id
+
 		a.Ch2 <- alertManager
+		alertManager.ID = primitive.ObjectID{}
 	}
 }
 
@@ -57,8 +58,15 @@ func (a *Adapter) WriteMessagesToKafka(ctx context.Context) {
 		msg := <-a.Ch2
 
 		for _, j := range msg.Alerts {
-			kafkaMessage.Dims.IP = j.Labels.Instance
-			kafkaMessage.Vals.AlertName = j.Annotations.Description
+			kafkaMessage.Vals = make(map[string]string)
+			kafkaMessage.Dims = j.Labels
+			kafkaMessage.Vals[j.Labels.AlertName] = j.Annotations.State
+			kafkaMessage.MongoID = msg.ID
+
+			_, err := a.KafkaCollection.InsertOne(context.Background(), kafkaMessage)
+			if err != nil {
+				continue
+			}
 
 			body, err := json.Marshal(kafkaMessage)
 			if err != nil {
@@ -66,11 +74,6 @@ func (a *Adapter) WriteMessagesToKafka(ctx context.Context) {
 			}
 			_, err = a.Conn.WriteMessages(
 				kafka.Message{Value: body})
-			if err != nil {
-				continue
-			}
-			collection := a.Database.Collection("old")
-			_, err = collection.InsertOne(context.Background(), kafkaMessage)
 			if err != nil {
 				continue
 			}
